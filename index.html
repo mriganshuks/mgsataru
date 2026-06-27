@@ -2,22 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
     <title>JJK: Cursed Technique</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', sans-serif; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Courier New', sans-serif;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            position: relative;
+            min-height: 100dvh;
+            touch-action: manipulation;
+        }
     
         #ui {
             position: absolute;
-            top: 10%;
-            width: 100%;
+            top: clamp(16px, 5vh, 44px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(92vw, 700px);
             text-align: center;
             color: #fff;
             pointer-events: none;
             z-index: 10;
+            padding: 0 12px;
+            box-sizing: border-box;
         }
         
         h1 { 
-            font-size: 3rem; margin: 0; letter-spacing: 10px; 
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin: 0;
+            letter-spacing: clamp(4px, 1.5vw, 10px);
             font-weight: 900; 
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             background: linear-gradient(to bottom, #fff, #888);
@@ -26,21 +49,23 @@
         }
         
         #technique-name { 
-            font-size: 1.2rem; color: #00ffff; margin-top: 15px; 
-            font-weight: bold; letter-spacing: 4px;
+            font-size: clamp(0.8rem, 2.2vw, 1.2rem);
+            color: #00ffff;
+            margin-top: 15px;
+            font-weight: bold;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
-        /* Large Centered Camera Hub - Taller for Reel Context */
         #video-container {
             position: absolute;
-            bottom: 2%;
-            left: 18%;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            left: 50%;
             transform: translateX(-50%) scaleX(-1);
-            width: 85vw;
-            max-width: 450px;
-            height: 42vh; 
+            width: min(90vw, 320px);
+            max-width: 320px;
+            height: min(32vh, 220px);
             border: 2px solid rgba(255, 255, 255, 0.2);
             z-index: 20;
             background-color: #000; 
@@ -52,10 +77,93 @@
         video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
         #output_canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
+        #status {
+            position: absolute;
+            left: 50%;
+            bottom: calc(min(32vh, 220px) + 20px);
+            transform: translateX(-50%);
+            width: min(92vw, 320px);
+            padding: 10px 12px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.68);
+            color: #fff;
+            font-size: 0.8rem;
+            text-align: center;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            pointer-events: none;
+        }
+
         #grain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 5;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+
+        #welcome-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+        }
+
+        #welcome-modal[hidden] {
+            display: none;
+        }
+
+        .welcome-card {
+            width: min(92vw, 420px);
+            padding: 24px;
+            border-radius: 20px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            text-align: center;
+        }
+
+        .welcome-card h2 {
+            margin: 0 0 10px;
+            font-size: clamp(1.35rem, 3vw, 1.8rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .welcome-card p {
+            margin: 0 0 18px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .welcome-card button {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font: inherit;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #000;
+            background: linear-gradient(90deg, #00ffff, #bb00ff);
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            #video-container {
+                width: min(30vw, 360px);
+                height: min(38vh, 260px);
+            }
+
+            #status {
+                width: min(36vw, 320px);
+                bottom: calc(min(38vh, 260px) + 24px);
+            }
         }
     </style>
     
@@ -75,13 +183,23 @@
 
     <div id="grain"></div>
 
+    <div id="welcome-modal" hidden>
+        <div class="welcome-card">
+            <h2>Welcome to MG Satoru</h2>
+            <p>Open your camera and use hand gestures to awaken the cursed techniques.</p>
+            <button id="welcome-close">Enter</button>
+        </div>
+    </div>
+
     <div id="ui">
         <h1>呪術廻戦</h1>
         <div id="technique-name">CURSED ENERGY</div>
     </div>
 
+    <div id="status">Allow camera access to activate hand-tracking effects.</div>
+
     <div id="video-container">
-        <video class="input_video"></video>
+        <video class="input_video" autoplay playsinline muted></video>
         <canvas id="output_canvas"></canvas>
     </div>
 
@@ -99,6 +217,11 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.domElement.style.position = 'fixed';
+    renderer.domElement.style.inset = '0';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.zIndex = '0';
     document.body.appendChild(renderer.domElement);
 
     const composer = new EffectComposer(renderer);
@@ -174,7 +297,38 @@
     const videoElement = document.querySelector('.input_video');
     const canvasElement = document.getElementById('output_canvas');
     const canvasCtx = canvasElement.getContext('2d');
+    const statusEl = document.getElementById('status');
+    const welcomeModal = document.getElementById('welcome-modal');
+    const welcomeClose = document.getElementById('welcome-close');
     let glowColor = '#00ffff';
+
+    function updateStatus(message) {
+        if (statusEl) {
+            statusEl.textContent = message;
+        }
+    }
+
+    function showWelcomeModal() {
+        if (!welcomeModal) return;
+        const hasSeenWelcome = sessionStorage.getItem('mg-satoru-welcome');
+        if (hasSeenWelcome) return;
+        welcomeModal.hidden = false;
+        window.setTimeout(() => {
+            welcomeModal.style.opacity = '1';
+        }, 50);
+    }
+
+    if (welcomeClose) {
+        welcomeClose.addEventListener('click', () => {
+            if (!welcomeModal) return;
+            welcomeModal.hidden = true;
+            sessionStorage.setItem('mg-satoru-welcome', 'true');
+        });
+    }
+
+    window.addEventListener('load', () => {
+        showWelcomeModal();
+    });
 
     const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
     hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7 });
@@ -238,7 +392,14 @@
             await hands.send({image: videoElement});
         }, width: 640, height: 480
     });
-    cameraUtils.start();
+
+    try {
+        cameraUtils.start();
+        updateStatus('Camera ready — show a hand gesture to activate a technique.');
+    } catch (error) {
+        console.error('Camera initialization failed:', error);
+        updateStatus('Camera access was blocked. Please allow permissions and refresh.');
+    }
 
     // Animation
     function animate() {
