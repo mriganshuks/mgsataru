@@ -26,10 +26,9 @@
         #ui {
             position: absolute;
             top: clamp(16px, 5vh, 44px);
-            left: 50%;
-            transform: translateX(-50%);
+            left: clamp(16px, 4vw, 36px);
             width: min(92vw, 700px);
-            text-align: center;
+            text-align: left;
             color: #fff;
             pointer-events: none;
             z-index: 10;
@@ -61,8 +60,8 @@
         #video-container {
             position: absolute;
             bottom: max(12px, env(safe-area-inset-bottom));
-            left: 50%;
-            transform: translateX(-50%) scaleX(-1);
+            left: clamp(16px, 4vw, 36px);
+            transform: scaleX(-1);
             width: min(90vw, 320px);
             max-width: 320px;
             height: min(32vh, 220px);
@@ -79,16 +78,15 @@
 
         #status {
             position: absolute;
-            left: 50%;
+            left: clamp(16px, 4vw, 36px);
             bottom: calc(min(32vh, 220px) + 20px);
-            transform: translateX(-50%);
             width: min(92vw, 320px);
             padding: 10px 12px;
             border-radius: 999px;
             background: rgba(0, 0, 0, 0.68);
             color: #fff;
             font-size: 0.8rem;
-            text-align: center;
+            text-align: left;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             z-index: 25;
@@ -163,6 +161,28 @@
             #status {
                 width: min(36vw, 320px);
                 bottom: calc(min(38vh, 260px) + 24px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            #ui {
+                left: 12px;
+                right: 12px;
+                width: auto;
+            }
+
+            #video-container {
+                left: 12px;
+                width: min(78vw, 240px);
+                height: min(28vh, 180px);
+            }
+
+            #status {
+                left: 12px;
+                right: 12px;
+                width: auto;
+                bottom: calc(min(28vh, 180px) + 16px);
+                text-align: center;
             }
         }
     </style>
